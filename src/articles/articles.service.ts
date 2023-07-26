@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ArticlesService {
   // eslint-disable-next-line prettier/prettier
 
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   create(createArticleDto: CreateArticleDto) {
     // return 'This action adds a new article';
@@ -34,7 +34,6 @@ export class ArticlesService {
   }
 
   remove(id: number) {
-    // return `This action removes a #${id} article`;
     return this.prisma.article.delete({
       where: { id },
     });

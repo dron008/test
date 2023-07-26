@@ -17,7 +17,7 @@ import { ArticleEntity } from './entities/article.entity';
 @Controller('articles')
 @ApiTags('articles')
 export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) { }
+  constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
   @ApiCreatedResponse({ type: ArticleEntity })
@@ -30,7 +30,6 @@ export class ArticlesController {
   findAll() {
     return this.articlesService.findAll();
   }
-
   @Get(':id')
   @ApiOkResponse({ type: ArticleEntity })
   async findOne(@Param('id') id: string) {
