@@ -1,10 +1,66 @@
 /* eslint-disable prettier/prettier */
 // prisma/seed.ts
 
+function cloneDeep<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 import { PrismaClient } from '@prisma/client';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
+
+export const roles = [
+  {
+    id: 1,
+    name: 'Admin',
+  },
+  {
+    id: 2,
+    name: 'User',
+  },
+];
+
+export const permissions = [
+  {
+    id: 1,
+    role_id: 1,
+    action: 'manage',
+    subject: 'all',
+    conditions: { created_by: '{{ id }}' },
+  },
+  {
+    id: 2,
+    role_id: 2,
+    action: 'read',
+    subject: 'Story',
+    conditions: { created_by: '{{ id }}' },
+  },
+  {
+    id: 3,
+    role_id: 2,
+    action: 'manage',
+    subject: 'Story',
+    conditions: { created_by: '{{ id }}' },
+  },
+];
+
+export const users = [
+  {
+    id: 1,
+    name: 'Billian',
+    roleid: 1,
+    email: 'billy@yopmail.com',
+    password: 123456789,
+  },
+  {
+    id: 2,
+    name: 'Bennison',
+    roleid: 2,
+    email: 'bennison@yopmail.com',
+    password: 123456789,
+  },
+];
 
 async function main() {
   // create two dummy articles

@@ -7,17 +7,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { GoogleStrategy } from './strategy/google.strategy';
+import { RefreshTokenStrategy } from './strategy/refreshToken.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, RefreshTokenStrategy],
   imports: [
     PrismaModule,
     PassportModule,
     JwtModule.register({
       global: true,
-      secret: `${process.env.JWT_SECRET}`,
-      signOptions: { expiresIn: `${process.env.EXPIRES_DATE}` },
     }),
     UsersModule,
   ],

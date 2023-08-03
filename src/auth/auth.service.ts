@@ -32,9 +32,9 @@ export class AuthService {
         throw new NotFoundException('Invalid Password');
       }
 
-      return {
-        accessToken: this.jwtService.sign({ userId: user.id }),
-      };
+      const tokens = await this.getTokens(user.id, user.email);
+      await this.updateRefreshToken(user.id, tokens.refreshToken);
+      return tokens;
     } catch (error) {
       return error.message;
     }
@@ -49,7 +49,9 @@ export class AuthService {
         name: dto.name,
       },
     });
-    return register;
+    const tokens = await this.getTokens(register.id, register.email);
+    await this.updateRefreshToken(register.id, tokens.refreshToken);
+    return tokens;
   }
 
   async update(id: number, updateAuthDto: UpdateAuthDto) {
@@ -66,17 +68,53 @@ export class AuthService {
   async remove(id: number) {
     return this.prisma.user.delete({ where: { id } });
   }
-  async goLogin(req: { user: any }) {
-    console.log(req);
-  }
   async googleLogin(req: { user: any }) {
     if (!req.user) {
       return 'No user from google';
     }
-    console.log(req.user);
     return {
       message: 'User from google account',
       user: req.user,
     };
+  }
+  async getTokens(userId: number, email: string): Promise<AuthEntity> {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.sign(
+        {
+          userId,
+          email,
+        },
+        {
+          secret: `${process.env.JWT_SECRET}`,
+          expiresIn: `${process.env.EXPIRES_DATE}`,
+        },
+      ),
+      this.jwtService.sign(
+        {
+          userId,
+          email,
+        },
+        {
+          secret: `${process.env.JWT_SECRET}`,
+          expiresIn: `${process.env.EXPIRES_DATE}`,
+        },
+      ),
+    ]);
+    return {
+      accessToken,
+      refreshToken: refreshToken,
+    };
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string) {
+    const hash = await bcrypt.hash(refreshToken, 10);
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        refreshToken: refreshToken,
+      },
+    });
   }
 }

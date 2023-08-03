@@ -32,6 +32,7 @@ export class AuthController {
   @Post('login')
   @ApiResponse({ type: AuthEntity })
   login(@Body() dto: LoginDto) {
+    console.log(dto);
     return this.authService.login(dto);
   }
 
@@ -41,6 +42,7 @@ export class AuthController {
     console.log(dto);
     return this.authService.register(dto);
   }
+
   @Patch(':id')
   @UseGuards(JWTAuthGuard)
   @ApiBearerAuth()
@@ -49,7 +51,7 @@ export class AuthController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAuthDto: UpdateAuthDto,
   ) {
-    return new UserEntity(await this.authService.update(id, updateAuthDto));
+    return await this.authService.update(id, updateAuthDto);
   }
 
   @Delete(':id')
@@ -57,15 +59,13 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserEntity })
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return new UserEntity(await this.authService.remove(id));
+    return await this.authService.remove(id);
   }
 
   @Get('')
   @UseGuards(GoogleOathAuthGuard)
   @ApiBearerAuth()
-  async googleAuth(@Request() req: any) {
-    return this.authService.goLogin(req);
-  }
+  async googleAuth(@Request() req: any) {}
 
   @Get('google-redirect')
   @UseGuards(GoogleOathAuthGuard)
