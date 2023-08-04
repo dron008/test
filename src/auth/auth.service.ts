@@ -47,6 +47,7 @@ export class AuthService {
         email: dto.email,
         password: hash,
         name: dto.name,
+        role: ['user'],
       },
     });
     const tokens = await this.getTokens(register.id, register.email);
